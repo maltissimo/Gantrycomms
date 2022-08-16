@@ -8,10 +8,6 @@ Author M. Altissimo c/o Elettra Sincrotrone Trieste SCpA.
 # this is now the loopback interface for testing purposes MA20220810
 import paramiko
 
-pmac_ip = "127.0.0.1"
-pmac_uname = "Teo"
-pmac_pwd = "{}Maramao-2015{}"
-
 """ 
 GlobaMotor definitions (please check before running!!)
 
@@ -35,6 +31,24 @@ Rot = "C" # rotation around Z axis
 ssh = paramiko.SSHClient()
 
 
+def get_credentials():
+    """
+    This function prompts the user to insert ip, username and password for ssh connection to the system.
+    It may be the pmac itself, or a loopback interface for testing purposes.
+
+    :return: three strings to be passed to the connec_to_pmac function, i.e. pmac_ip, pmac_uname, and pmac_pwd
+    """
+    print("You will be asked to input IP, username and password for ssh connection to the remote system. ")
+    print(" It may be the pmac itself, or a loopback interface for testing purposes.")
+    print()
+    print("Please enter system IP address: ")
+    pmac_ip = str(input())
+    print("Please enter system username: ")
+    pmac_uname = str(input())
+    print("Please enter system password: ")
+    pmac_pwd = str(input())
+    return (pmac_ip, pmac_uname, pmac_pwd)
+
 
 def connect_to_pmac(pmac_ip, pmac_uname, pmac_pwd):
     """
@@ -57,7 +71,7 @@ def connect_to_pmac(pmac_ip, pmac_uname, pmac_pwd):
             # Connect to pmac using username/password authentication.
             ssh.connect(pmac_ip, username=pmac_uname, password=pmac_pwd, look_for_keys=False)
         except Exception as error_message:
-            print("Unable to connect")
+            print("Unable to connect, perhaps wrong password?")
             print(error_message)
     return()
 
