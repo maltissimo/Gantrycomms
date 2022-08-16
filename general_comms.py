@@ -21,14 +21,26 @@ around the Y and Z-axis respectively. The displacement of the rotary axes is exp
 degree units.
 """
 
-X = 5
-Y= 6
-Z = 3
-Roll = "A"  #  rotation around X axis
-Pitch = "B" #Rotation around Y axis
-Rot = "C" # rotation around Z axis
+X = 5  # Coordinate system 3, units: microns
+Y= 6   # Coordinate system 3, units: microns
+Z = "Z"  # Coordinate system 2, moves the RTT stage up and down, units: microns
+Roll = "A"  #  tips the RTT stage towards front or back, i.e. rotation around X axis, units: degrees
+Pitch = "B" # tilts the RTT stage towards left and right, Rotation around Y axis, units: degrees
+Rot = "C"  # rotation around Z axis, units: degrees
 
 ssh = paramiko.SSHClient()
+
+def help_credentials():
+    """
+    Prints connection credentials for ssh-ing into pmac
+    :return: IP, username and pwd of pmac
+    """
+    print("Pmac IP:         192.168.0.200")
+    print("Pmac username:   root")
+    print("Pmac Password:   deltatau")
+    print()
+    print("You are welcome!")
+    return()
 
 
 def get_credentials():
@@ -136,4 +148,52 @@ def home_all():
     ssh.exec_command(home)
     return ()
 
+def axis_conversion(axis):
+    """
+    Converts axis as input by user back into pmac understandable format
+
+    :param axis: X, Y, Z, pitch, roll, rot
+    :return: 5,6, Z, A, B, C depending on the user choice
+    """
+    if axis == "X" or axis == "x":
+        ret = "5"
+    elif axis == "Y" or axis == "y":
+        ret = "6"
+    elif axis == "Z" or axis == "z":
+        ret = "Z"
+    elif axis == "PITCH" or axis == "Pitch" or axis =="pitch":
+        ret = "B"
+    elif axis == "ROLL" or axis == "Roll" or axis == "roll":
+        ret = "A"
+    elif axis == "ROT" or axis == "Rot" or axis == "rot" or axis == "Rotation" or axis == "rotation" or axis == "YAW" or axis == "Yaw" or axis == "yaw":
+        ret = "C"
+
+    return(ret)
+
+
+
+def get_jogspeed(axis):
+    """
+    Gets from the system the jogspeed for the specified axis
+    the user can input in normal x,y,z, pithc, roll, rot  | yaw
+    :param axis: the axis for which the jogspeed is required
+    :return: int, the programmed jogspeed.
+    """
+    # TODO disable echoing, so as to return only one value, see Pmac user and software manual
+    new_ax = axis_conversion(axis)
+    if new_ax == "A" or new_ax == "B" or new_ax == "C":
+        stdin, stdout, stderr = ssh.exec_command("Motor[1].JogSpeed")
+        stdin, stdout, stderr = ssh.exec_command("Motor[2].JogSpeed")
+        stdin, stdout, stderr = ssh.exec_command("Motor[3].JogSpeed")
+    else:
+    stdin, stdout, stderr = ssh.exec_command("Motor[",new_ax,"].JogSpeed")
+    return(stdin)
+
+def set_jogspeed(axis):
+    """
+    sets the jog speed of the specified axis
+    """
+
+
 #TODO: must read data from pmac, i.e.: command finished, standard errors.
+#TODO: insert helper function printing names of axes, and units.
