@@ -20,7 +20,8 @@ looking in the positive linear direction). Similarly, the B-axis and the C-axis 
 around the Y and Z-axis respectively. The displacement of the rotary axes is expressed in
 degree units.
 """
-
+GPASCII = "gpascii -2"  # this is needed to start the interpreter on the Pmac
+EOT = "\04"             #End of transmission character, to close connection
 X = 5  # Coordinate system 3, units: microns
 Y= 6   # Coordinate system 3, units: microns
 Z = "Z"  # Coordinate system 2, moves the RTT stage up and down, units: microns
@@ -85,6 +86,11 @@ def connect_to_pmac(pmac_ip, pmac_uname, pmac_pwd):
         except Exception as error_message:
             print("Unable to connect, perhaps wrong password?")
             print(error_message)
+
+    # now we have to send a gpascii -2 command.
+    stdin, stout, stderr = ssh.exec_command(GPASCII)
+    if not stdout.readlines()== "STDIN Open for ASCII Input":
+        raise ValueError('GPASCII startup string not found')
     return()
 
 
