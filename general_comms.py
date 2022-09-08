@@ -7,7 +7,7 @@ Author M. Altissimo c/o Elettra Sincrotrone Trieste SCpA.
 """
 # this is now the loopback interface for testing purposes MA20220810
 import paramiko
-
+import time
 """ 
 GlobaMotor definitions (please check before running!!)
 
@@ -65,12 +65,13 @@ def get_credentials():
 
 def connect_to_pmac(pmac_ip, pmac_uname, pmac_pwd):
     """
-    This functions connects to PMAC
+    This functions connects to PMAC and returns a shell object, which can be used to send
+    commands down to the PMAC. See file "paramiko_tests.py" for clarification.
 
     :param pmac_ip: Pmac's IP address
     :param pmac_uname: Pmac's user name
     :param pmac_pwd: Pmac's password
-    :return: nothing
+    :return pmac_conn: a shell from paramiko, that can be used to send commands down.
     """
     # Load SSH host keys.
     ssh.load_system_host_keys()
@@ -83,17 +84,19 @@ def connect_to_pmac(pmac_ip, pmac_uname, pmac_pwd):
             print("Attempt to connect: %s" % attempt)
             # Connect to pmac using username/password authentication.
             ssh.connect(pmac_ip, username=pmac_uname, password=pmac_pwd, look_for_keys=False)
+            pmac_conn = ssh.invoke_shell()
+            print("Successfully connected to %s" pmac_ip)
         except Exception as error_message:
             print("Unable to connect, perhaps wrong password?")
             print(error_message)
+    return(pmac_conn)
 
-    # now we have to send a gpascii -2 command.
-    stdin, stout, stderr = ssh.exec_command(GPASCII)
-    if not stdout.readlines()== "STDIN Open for ASCII Input":
-        raise ValueError('GPASCII startup string not found')
-    return()
-
-
+ def housekeeping(shell_connection):
+     shell_connection.send("terminal length 0 \n")
+     shell_connection.send(GPASCII)
+     sleep(0.5)
+     print(shell_connection.recv(5000).decode("UTF-8"))
+     return()
 
 def close_connection(SSH_object):
     """
