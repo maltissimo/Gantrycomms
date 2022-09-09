@@ -119,14 +119,14 @@ def is_open(SSH_object):
 
 def move(axis, speed, mode,  length ):
     """
-    See motor definition above!!! This sends an exec_command through ssh to the pmac
+    See motor definition above!!!
     The system of reference is inferred from the motor called.
     
     :param axis: axis for motion
     :param speed: interpolated (i.e. slow, pmad default) or rapid.
     :param mode: absolute (abs) or relative (inc)
     :param length: length of motion
-    :return: 
+    :return: a string containing the move, to be passed to a shell.
     """
     if axis == "X" or  axis == "Y":
         SR = str(3)
@@ -139,22 +139,19 @@ def move(axis, speed, mode,  length ):
 
     else: mode == "abs"
 
-    command = "&" + SR + " cpx " + speed + " " +  mode + " " + axis + length
+    command = "&" + SR + " cpx " + speed + " " +  mode + " " + axis + length + "\n"
 
-    print(command)
-    stdin, stdout, stderr = ssh.exec_command(command)
+    return(command)
 
-    return()
-
-def home_all():
+def home_all(pmac_conn):
     """
-    This function homes all axes as per QSys protocol
+    This function homes all axes as per QSys protocol.
     :return:
     """
     axes = "selectAxes = selectAll"
-    ssh.exec_command(axes)
+    pmac_conn.send(axes)
     home = "requestHost = requestHome"
-    ssh.exec_command(home)
+    pmac_conn.send(home)
     return ()
 
 def axis_conversion(axis):
