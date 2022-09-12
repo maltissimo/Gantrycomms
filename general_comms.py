@@ -84,14 +84,14 @@ def connect_to_pmac(pmac_ip, pmac_uname, pmac_pwd):
             print("Attempt to connect: %s" % attempt)
             # Connect to pmac using username/password authentication.
             ssh.connect(pmac_ip, username=pmac_uname, password=pmac_pwd, look_for_keys=False)
-            pmac_conn = ssh.invoke_shell()
+            pmac_conn = session.invoke_shell()
             print("Successfully connected to %s" pmac_ip)
         except Exception as error_message:
             print("Unable to connect, perhaps wrong password?")
             print(error_message)
     return(pmac_conn)
 
- def housekeeping(shell_connection):
+ def GantrySysInit(shell_connection):
      shell_connection.send("terminal length 0 \n")
      shell_connection.send(GPASCII)
      sleep(0.5)
@@ -105,6 +105,7 @@ def close_connection(SSH_object):
     :return: nothing
     """
     SSH_object.close()
+    print("SSH connection successfully closed")
     return()
 
 def is_open(SSH_object):
@@ -145,7 +146,7 @@ def move(axis, speed, mode,  length ):
 
 def home_all(pmac_conn):
     """
-    This function homes all axes as per QSys protocol.
+    This function homes all axes as per QSys protocol. It should be run only once the system is turned on.
     :return:
     """
     axes = "selectAxes = selectAll"
