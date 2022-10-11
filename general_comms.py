@@ -74,15 +74,14 @@ def connect_to_pmac():
     ssh.load_system_host_keys()
     # Add SSH host key when missing.
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-
+    credentials = get_credentials()
     total_attempts = 5
     for attempt in range(total_attempts):
         try:
             print("Attempt to connect: %s" % attempt)
             # Connect to pmac using username/password authentication.
-            credentials = get_credentials()
             ssh.connect(credentials[0], username=credentials[1], password=credentials[1], look_for_keys=False)
-            pmac_shell = session.invoke_shell()
+            pmac_shell = ssh.invoke_shell()
             print("Successfully connected to %s ", pmac_ip)
         except Exception as error_message:
             print("Unable to connect, perhaps wrong password?")
