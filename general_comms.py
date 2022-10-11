@@ -9,15 +9,16 @@ Author M. Altissimo c/o Elettra Sincrotrone Trieste SCpA.
 import paramiko
 import time
 """ 
-GlobaMotor definitions (please check before running!!)
+GlobalMotor definitions (please check before running!!)
 
 From QSYS manual: 
-The linear motion axes are referred to as X, Y and Z, with the positive direction as shown in
-the pictures above. The displacement of the linear axes is expressed in micrometer units.
+The linear motion axes are referred to as X, Y and Z. 
+The displacement of the linear axes is expressed in micrometer units.
 The rotary motion axes are referred to as the A, B and C-axis. The A-axis is the rotation
 around the X-axis, with the direction defined by the righthand rule (a clockwise turn when
 looking in the positive linear direction). Similarly, the B-axis and the C-axis are the rotation
-around the Y and Z-axis respectively. The displacement of the rotary axes is expressed in
+around the Y and Z-axis respectively. 
+The displacement of the rotary axes is expressed in
 degree units.
 """
 GPASCII = "gpascii -2"  # this is needed to start the interpreter on the Pmac
