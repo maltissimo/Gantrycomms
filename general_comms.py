@@ -72,7 +72,7 @@ def connect_to_pmac(pmac_ip, pmac_uname, pmac_pwd):
     :param pmac_ip: Pmac's IP address
     :param pmac_uname: Pmac's user name
     :param pmac_pwd: Pmac's password
-    :return pmac_conn: a shell from paramiko, that can be used to send commands down.
+    :return pmac_shell: a shell from paramiko, that can be used to send commands down.
     """
     # Load SSH host keys.
     ssh.load_system_host_keys()
@@ -85,12 +85,12 @@ def connect_to_pmac(pmac_ip, pmac_uname, pmac_pwd):
             print("Attempt to connect: %s" % attempt)
             # Connect to pmac using username/password authentication.
             ssh.connect(pmac_ip, username=pmac_uname, password=pmac_pwd, look_for_keys=False)
-            pmac_conn = session.invoke_shell()
+            pmac_shell = session.invoke_shell()
             print("Successfully connected to %s" pmac_ip)
         except Exception as error_message:
             print("Unable to connect, perhaps wrong password?")
             print(error_message)
-    return(pmac_conn)
+    return(pmac_shell)
 
  def GantrySysInit(shell_connection):
      shell_connection.send("terminal length 0 \n")
@@ -98,6 +98,20 @@ def connect_to_pmac(pmac_ip, pmac_uname, pmac_pwd):
      sleep(0.5)
      print(shell_connection.recv(5000).decode("UTF-8"))
      return()
+
+def listen (shell_connection):
+    """
+    This function just prints out whatever output is produced on the shell passed as pararameter.
+
+    :param shell_connection: a paramiko active shell object
+    :return: the output of the shell if it's open, otherwise an error message.
+
+    """
+    if is_open(shell_connection):
+        return(shell_conneciton.recv(5000).decode("UTF-8"))
+    else:
+        return(print("Connection is closed, you must open one to listen to output"))
+
 
 def close_connection(SSH_object):
     """
