@@ -104,13 +104,10 @@ def listen (shell_connection):
     This function just prints out whatever output is produced on the shell passed as pararameter.
 
     :param shell_connection: a paramiko active shell object
-    :return: the output of the shell if it's open, otherwise an error message.
+    :return:
 
     """
-    if is_open(shell_connection):
-        return(shell_conneciton.recv(5000).decode("UTF-8"))
-    else:
-        return(print("Connection is closed, you must open one to listen to output"))
+    return(shell_conneciton.recv(5000).decode("UTF-8"))
 
 
 def close_connection(SSH_object):
