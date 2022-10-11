@@ -61,17 +61,13 @@ def get_credentials():
     pmac_uname = str(input())
     print("Please enter system password: ")
     pmac_pwd = str(input())
-    return (pmac_ip, pmac_uname, pmac_pwd)
+    return ([pmac_ip, pmac_uname, pmac_pwd])
 
 
-def connect_to_pmac(pmac_ip, pmac_uname, pmac_pwd):
+def connect_to_pmac():
     """
     This functions connects to PMAC and returns a shell object, which can be used to send
     commands down to the PMAC. See file "paramiko_tests.py" for clarification.
-
-    :param pmac_ip: Pmac's IP address
-    :param pmac_uname: Pmac's user name
-    :param pmac_pwd: Pmac's password
     :return pmac_shell: a shell from paramiko, that can be used to send commands down.
     """
     # Load SSH host keys.
@@ -84,15 +80,16 @@ def connect_to_pmac(pmac_ip, pmac_uname, pmac_pwd):
         try:
             print("Attempt to connect: %s" % attempt)
             # Connect to pmac using username/password authentication.
-            ssh.connect(pmac_ip, username=pmac_uname, password=pmac_pwd, look_for_keys=False)
+            credentials = get_credentials()
+            ssh.connect(credentials[0], username=credentials[1], password=credentials[1], look_for_keys=False)
             pmac_shell = session.invoke_shell()
-            print("Successfully connected to %s" pmac_ip)
+            print("Successfully connected to %s ", pmac_ip)
         except Exception as error_message:
             print("Unable to connect, perhaps wrong password?")
             print(error_message)
     return(pmac_shell)
 
- def GantrySysInit(shell_connection):
+def GantrySysInit(shell_connection):
      shell_connection.send("terminal length 0 \n")
      shell_connection.send(GPASCII)
      sleep(0.5)
@@ -205,7 +202,7 @@ def get_jogspeed(axis):
         stdin, stdout, stderr = ssh.exec_command("Motor[2].JogSpeed")
         stdin, stdout, stderr = ssh.exec_command("Motor[3].JogSpeed")
     else:
-    stdin, stdout, stderr = ssh.exec_command("Motor[",new_ax,"].JogSpeed")
+        stdin, stdout, stderr = ssh.exec_command("Motor[",new_ax,"].JogSpeed")
     return(stdin)
 
 def set_jogspeed(axis):
