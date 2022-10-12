@@ -75,21 +75,13 @@ def connect_to_pmac():
     # Add SSH host key when missing.
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     credentials = get_credentials()
-    total_attempts = 5
-    for attempt in range(total_attempts):
-        try:
-            print("Attempt to connect: %s" % attempt)
-            # Connect to pmac using username/password authentication.
-            ssh.connect(credentials[0], username=credentials[1], password=credentials[1], look_for_keys=False)
-            pmac_shell = ssh.invoke_shell()
-            print("Successfully connected to %s ", pmac_ip)
-        except Exception as error_message:
-            print("Unable to connect, perhaps wrong password?")
-            print(error_message)
+    ssh.connect(credentials[0], username=credentials[1], password=credentials[2])
+    print("Successfully connected to ", credentials[0])
+    pmac_shell = ssh.invoke_shell()
     return(pmac_shell)
 
 def GantrySysInit(shell_connection):
-     shell_connection.send("terminal length 0 \n")
+     shell_connection.send("terminal length 0\n")
      shell_connection.send(GPASCII)
      sleep(0.5)
      print(shell_connection.recv(5000).decode("UTF-8"))
@@ -97,13 +89,42 @@ def GantrySysInit(shell_connection):
 
 def listen (shell_connection):
     """
-    This function just prints out whatever output is produced on the shell passed as pararameter.
+    This function returns a bytes output of whatever the shell passed as pararameter contains.
 
     :param shell_connection: a paramiko active shell object
-    :return:
+    :return output: a bytes object ready to be formatted and
 
     """
-    return(shell_conneciton.recv(5000).decode("UTF-8"))
+    while shell_connection.recv_ready(): #there is space and scope here to add a timeout
+        if shell_connection.recv_ready(): # must test for recv_ready() in order for the code not to hang!
+            output = shell_connection.recv(1024).decode("UTF-8")
+
+    return(output)
+
+def format_output(bytes_buffer):
+    """
+    Formats the output of a shell.recv()command.
+    :param bytes_buffer: output from the function listen
+
+    """
+    delim = "\r\n"
+    lines = bytes_buffer.split(delim)
+    if not bytes_buffer.endswith(delim):
+        bytes_buffer = lines [-1]
+        lines = lines[:-1]
+    for line in lines:
+        yield line.rstrip()
+
+def printout(output):
+    """
+    This function prints the 1024 bytes of output obtained from the listen(shell) function, and formatted by the format_output(bytes_buffer) output
+
+    :param output: the list formatted by the format_output(bytes_buffer function)
+    :return:
+    """
+    for i in format_output(output):
+        print(i, end ="\n")
+    return()
 
 
 def close_connection(SSH_object):
