@@ -12,6 +12,7 @@ Author M. Altissimo c/o Elettra Sincrotrone Trieste SCpA.
 # this is now the loopback interface for testing purposes MA20220810
 import paramiko
 from help_functions import *
+from global_motor_definitions import *
 import time
 """ 
 GlobalMotor definitions (please check before running!!)
@@ -198,27 +199,7 @@ def home_all(pmac_conn):
     pmac_conn.send(home)
     return ()
 
-def axis_conversion(axis):
-    """
-    Converts axis as input by user back into pmac understandable format
 
-    :param axis: X, Y, Z, pitch, roll, rot
-    :return: 5,6, Z, A, B, C depending on the user choice
-    """
-    if axis == "X" or axis == "x":
-        ret = "5"
-    elif axis == "Y" or axis == "y":
-        ret = "6"
-    elif axis == "Z" or axis == "z":
-        ret = "Z"
-    elif axis == "PITCH" or axis == "Pitch" or axis =="pitch":
-        ret = "B"
-    elif axis == "ROLL" or axis == "Roll" or axis == "roll":
-        ret = "A"
-    elif axis == "ROT" or axis == "Rot" or axis == "rot" or axis == "Rotation" or axis == "rotation" or axis == "YAW" or axis == "Yaw" or axis == "yaw":
-        ret = "C"
-
-    return(ret)
 
 
 def get_jogspeed(shell, axis):
