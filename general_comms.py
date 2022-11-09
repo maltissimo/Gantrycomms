@@ -7,7 +7,7 @@ shell.send(command)
 Author M. Altissimo c/o Elettra Sincrotrone Trieste SCpA.
 
 """
-13 Oct 2022
+17 Oct 2022
 
 # this is now the loopback interface for testing purposes MA20220810
 import paramiko
@@ -75,10 +75,10 @@ def connect_to_pmac():
     return(pmac_shell)
 
 def GantrySysInit(shell_connection):
-     shell_connection.send("terminal length 0\n")
      shell_connection.send(GPASCII)
      sleep(0.5)
-     print(shell_connection.recv(5000).decode("UTF-8"))
+     out = listen(shell_connection)
+     printout(format_output(out))
      return()
 
 def listen (shell_connection, nbytes = 1024):
