@@ -4,11 +4,7 @@ This module provides a set of helper functions, to be used in congjuction with g
 Author M. Altissimo c/o Elettra Sincrotrone Trieste SCpA.
 
 """
-13 Oct 2022
 
-"""
-
-"""
 
 def help_credentials():
     """

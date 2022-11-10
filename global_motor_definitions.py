@@ -42,7 +42,7 @@ Further to this, here below the motor definitions:
 
 Author M. Altissimo c/o Elettra Sincrotrone Trieste SCpA
 
-""""
+"""
 
 def axis_conversion(axis):
     """
@@ -52,9 +52,9 @@ def axis_conversion(axis):
     :return: 5,6, Z, A, B, C depending on the user choice
     """
     if axis == "X" or axis == "x":
-        ret = "5"
+        ret = "X"
     elif axis == "Y" or axis == "y":
-        ret = "6"
+        ret = "Y"
     elif axis == "Z" or axis == "z":
         ret = "Z"
     elif axis == "PITCH" or axis == "Pitch" or axis =="pitch":
@@ -66,7 +66,7 @@ def axis_conversion(axis):
 
     return(ret)
     
-
+"""
 Motor[1]_JogTa=50
 Motor[1]_JogTs=50
 Motor[1]_AbortTa=10
@@ -108,4 +108,4 @@ Motor[6]_JogTs=100
 Motor[6]_AbortTa=50
 Motor[6]_JogSpeed=10
 Motor[6]_PosUnit=4
-M
+"""
