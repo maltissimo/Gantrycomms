@@ -37,7 +37,7 @@ def help_units ():
     print("  Yaw            degrees  ")
     return()
 
-def help_movements():
+def help_reference():
     """
     Prints the axes, their number convention in the system, and the System of Reference (SR) they belong to.
 
@@ -48,7 +48,7 @@ def help_movements():
     print(" X = 5,    Coordinate System:  3")
     print(" Y = 6,    Coordinate system: 3")
     print(" Z = Z,    Coordinate system: 2, moves the RTT stage up and down")
-    print("Roll = A,  Coordinate System: 2, tips the RTT stage towards front or back, i.e. rotation around X axis")
-    print("Pitch = B, Coordinate System: 2, tilts the RTT stage towards left and right, Rotation around Y axis, units: degrees")
-    print("Rot = C,   Coordinate System: 2, rotation around Z axis")
+    print("Roll = A,  Coordinate System: 1, tips the RTT stage towards front or back, i.e. rotation around X axis")
+    print("Pitch = B, Coordinate System: 1, tilts the RTT stage towards left and right, Rotation around Y axis, units: degrees")
+    print("Rot = C,   Coordinate System: 1, rotation around Z axis")
     return()

@@ -43,7 +43,7 @@ Further to this, here below the motor definitions:
 Author M. Altissimo c/o Elettra Sincrotrone Trieste SCpA
 
 """
-
+from general_comms import *
 def axis_conversion(axis):
     """
     Converts axis as input by user back into Pmac-understandable format
@@ -65,7 +65,60 @@ def axis_conversion(axis):
         ret = "C"
 
     return(ret)
-    
+
+def home_all(pmac_conn):
+    """
+    This function homes all axes as per QSys protocol. It should be run only once the system is turned on.
+    :return:
+    """
+    axes = "selectAxes = selectAll\n"
+    pmac_conn.send(axes)
+    home = "requestHost = requestHome\n"
+    pmac_conn.send(home)
+    return ()
+
+def Idle(shell):
+    """
+    This funcion performs a requestIdle command as per Qsys protocols.
+    :param shell:  a paramiko shell connected to pmac
+    :return:
+    """
+    axes = "selectAxes = selectAll\n"
+    shell.send(axes)
+    idle = "requestHost = requestIdle\n"
+    shell.send(idle)
+    return("Idling all axes")
+
+def move(shell, axis, speed, mode, length):
+    """
+    See motor definition above!!!
+    The system of reference is inferred from the motor called.
+
+    :param shell: required, a SSH shell for comms.
+    :param axis: axis for motion
+    :param speed: interpolated (i.e. slow, pmac default) or rapid.
+    :param mode: absolute (abs) or relative (inc)
+    :param length: length of motion
+    :return: a string containing the move, to be passed to a shell.
+    """
+    if axis == "X" or axis == "Y":
+        SR = str(3)
+    elif  axis == "Pitch" or axis == "pitch" or axis == "Roll" or axis == "roll" or axis == "Z":
+        SR = str(1)
+    elif axis == "Rot" or axis == "rot" or axis == "rotation" or axis == "Rotation":
+        SR = str(2)
+
+    if mode == "relative" or mode == "Rel" or mode == "Relative":
+        mode == "inc"
+
+    else:
+        mode == "abs"
+
+    command = str( "&" + SR + " cpx " + speed + " " + mode + " " + axis_conversion(axis) + str(length) + "\n")
+    shell.send(command)
+    output = str("Move: " + command + " sent as requested")
+
+    return (output)
 """
 Motor[1]_JogTa=50
 Motor[1]_JogTs=50

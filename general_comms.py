@@ -7,7 +7,7 @@ shell.send(command)
 Author M. Altissimo c/o Elettra Sincrotrone Trieste SCpA.
 
 """
-13 Oct 2022
+
 
 # this is now the loopback interface for testing purposes MA20220810
 import paramiko
@@ -77,12 +77,11 @@ def connect_to_pmac():
 
 
 def GantrySysInit(shell_connection):
-    shell_connection.send("terminal length 0\n")
     shell_connection.send(GPASCII)
-    sleep(0.5)
-    print(shell_connection.recv(5000).decode("UTF-8"))
+    time.sleep(0.5)
+    out = listen(shell_connection)
+    printout(out)
     return ()
-
 
 def listen(shell_connection, nbytes=1024):
     """
@@ -165,52 +164,6 @@ def is_open(SSH_object):
     """
     ret = SSH_object.get_transport().is_active()
     return (ret)
-
-
-def move(shell, axis, speed, mode, length):
-    """
-    See motor definition above!!!
-    The system of reference is inferred from the motor called.
-
-    :param shell: required, a SSH shell for comms.
-    :param axis: axis for motion
-    :param speed: interpolated (i.e. slow, pmac default) or rapid.
-    :param mode: absolute (abs) or relative (inc)
-    :param length: length of motion
-    :return: a string containing the move, to be passed to a shell.
-    """
-    if axis == "X" or axis == "Y":
-        SR = str(3)
-    else:
-        if  axis == "Pitch" or axis == "pitch" or axis == "Roll" or axis == "roll" or axis == "Z":
-            SR = str(1)
-    else:
-        if axis == "Rot":
-            SR = str(2)
-
-    if mode == "relative" or mode == "Rel" or mode == "Relative":
-        mode == "inc"
-
-    else:
-        mode == "abs"
-
-    command = str( "&" + SR + " cpx " + speed + " " + mode + " " + axis_conversion(axis) + str(length) + \n)
-    shell.send(command)
-    output = str("Move: " + command + " sent as requested")
-
-    return (output)
-
-
-def home_all(pmac_conn):
-    """
-    This function homes all axes as per QSys protocol. It should be run only once the system is turned on.
-    :return:
-    """
-    axes = "selectAxes = selectAll\n"
-    pmac_conn.send(axes)
-    home = "requestHost = requestHome\n"
-    pmac_conn.send(home)
-    return ()
 
 def kill(shell):
     """
