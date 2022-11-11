@@ -44,7 +44,6 @@ Author M. Altissimo c/o Elettra Sincrotrone Trieste SCpA
 
 """
 
-
 def axis_conversion(axis):
     """
     Converts axis as input by user back into Pmac-understandable format
@@ -53,9 +52,9 @@ def axis_conversion(axis):
     :return: 5,6, Z, A, B, C depending on the user choice
     """
     if axis == "X" or axis == "x":
-        ret = "5"
+        ret = "X"
     elif axis == "Y" or axis == "y":
-        ret = "6"
+        ret = "Y"
     elif axis == "Z" or axis == "z":
         ret = "Z"
     elif axis == "PITCH" or axis == "Pitch" or axis =="pitch":
@@ -66,57 +65,47 @@ def axis_conversion(axis):
         ret = "C"
 
     return(ret)
+    
+"""
+Motor[1]_JogTa=50
+Motor[1]_JogTs=50
+Motor[1]_AbortTa=10
+Motor[1]_MaxSpeed=0.5
+Motor[1]_JogSpeed=0.5
+Motor[1]_HomeVel=0.5
+Motor[1]_PosUnit=4
 
-def motorNameConv(motorName):
-    """
-    This function converts the name of a motor to a Pmac compatible, i.e.
-    Motor_i -> Motor[i]
+Motor[2]_JogTa=50
+Motor[2]_JogTs=50
+Motor[2]_AbortTa=10
+Motor[2]_MaxSpeed=0.5
+Motor[2]_JogSpeed=0.5
+Motor[2]_HomeVel=0.5
+Motor[2]_PosUnit=4
 
-    :param motorName:
-    :return: a string with the correct motor name for interrogating PMac.
-    """
-    index = motorName[-1]
-    convName = motorName[:len(motorName)-2] + "[" + index + "]"
-    return(convName)
+Motor[3]_JogTa=50
+Motor[3]_JogTs=50
+Motor[3]_AbortTa=10
+Motor[3]_MaxSpeed=0.5
+Motor[3]_JogSpeed=0.5
+Motor[3]_HomeVel=0.5
+Motor[3]_PosUnit=4
 
-Motor_1_JogTa=50
-Motor_1_JogTs=50
-Motor_1_AbortTa=10
-Motor_1_MaxSpeed=0.5
-Motor_1_JogSpeed=0.5
-Motor_1_HomeVel=0.5
-Motor_1_PosUnit=4
+Motor[4]_JogTa=300
+Motor[4]_JogTs=100
+Motor[4]_AbortTa=-20000
+Motor[4]_JogSpeed=0.0049999999
+Motor[4]_HomeVel=0.0049999999
+Motor[4]_PosUnit=11
 
-Motor_2_JogTa=50
-Motor_2_JogTs=50
-Motor_2_AbortTa=10
-Motor_2_MaxSpeed=0.5
-Motor_2_JogSpeed=0.5
-Motor_2_HomeVel=0.5
-Motor_2_PosUnit=4
+Motor[5]_JogTa=100
+Motor[5]_JogTs=100
+Motor[5]_JogSpeed=10
+Motor[5]_PosUnit=4
 
-Motor_3_JogTa=50
-Motor_3_JogTs=50
-Motor_3_AbortTa=10
-Motor_3_MaxSpeed=0.5
-Motor_3_JogSpeed=0.5
-Motor_3_HomeVel=0.5
-Motor_3_PosUnit=4
-
-Motor_4_JogTa=300
-Motor_4_JogTs=100
-Motor_4_AbortTa=-20000
-Motor_4_JogSpeed=0.0049999999
-Motor_4_HomeVel=0.0049999999
-Motor_4_PosUnit=11
-
-Motor_5_JogTa=100
-Motor_5_JogTs=100
-Motor_5_JogSpeed=10
-Motor_5_PosUnit=4
-
-Motor_6_JogTa=100
-Motor_6_JogTs=100
-Motor_6_AbortTa=50
-Motor_6_JogSpeed=10
-Motor_6_PosUnit=4
+Motor[6]_JogTa=100
+Motor[6]_JogTs=100
+Motor[6]_AbortTa=50
+Motor[6]_JogSpeed=10
+Motor[6]_PosUnit=4
+"""

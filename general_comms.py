@@ -7,13 +7,14 @@ shell.send(command)
 Author M. Altissimo c/o Elettra Sincrotrone Trieste SCpA.
 
 """
-17 Oct 2022
+13 Oct 2022
 
 # this is now the loopback interface for testing purposes MA20220810
 import paramiko
 from help_functions import *
 from global_motor_definitions import *
 import time
+
 """ 
 GlobalMotor definitions (please check before running!!)
 
@@ -26,13 +27,13 @@ looking in the positive linear direction). Similarly, the B-axis and the C-axis 
 around the Y and Z-axis respectively. 
 The displacement of the rotary axes is expressed in degree units.
 """
-GPASCII = "gpascii -2"  # this is needed to start the interpreter on the Pmac
-EOT = "\04"             #End of transmission character, to close connection
+GPASCII = "gpascii -2 2>&1\n"  # this is needed to start the interpreter on the Pmac
+EOT = "\04"  # End of transmission character, to close connection
 X = 5  # Coordinate system 3, units: microns
-Y= 6   # Coordinate system 3, units: microns
+Y = 6  # Coordinate system 3, units: microns
 Z = "Z"  # Coordinate system 2, moves the RTT stage up and down, units: microns
-Roll = "A"  #  tips the RTT stage towards front or back, i.e. rotation around X axis, units: degrees
-Pitch = "B" # tilts the RTT stage towards left and right, Rotation around Y axis, units: degrees
+Roll = "A"  # tips the RTT stage towards front or back, i.e. rotation around X axis, units: degrees
+Pitch = "B"  # tilts the RTT stage towards left and right, Rotation around Y axis, units: degrees
 Rot = "C"  # rotation around Z axis, units: degrees
 
 ssh = paramiko.SSHClient()
@@ -72,16 +73,18 @@ def connect_to_pmac():
     ssh.connect(credentials[0], username=credentials[1], password=credentials[2])
     print("Successfully connected to ", credentials[0])
     pmac_shell = ssh.invoke_shell()
-    return(pmac_shell)
+    return (pmac_shell)
+
 
 def GantrySysInit(shell_connection):
-     shell_connection.send(GPASCII)
-     sleep(0.5)
-     out = listen(shell_connection)
-     printout(format_output(out))
-     return()
+    shell_connection.send("terminal length 0\n")
+    shell_connection.send(GPASCII)
+    sleep(0.5)
+    print(shell_connection.recv(5000).decode("UTF-8"))
+    return ()
 
-def listen (shell_connection, nbytes = 1024):
+
+def listen(shell_connection, nbytes=1024):
     """
     This function returns a bytes output of whatever the shell passed as pararameter contains.
 
@@ -90,11 +93,12 @@ def listen (shell_connection, nbytes = 1024):
     :return output: a bytes object
 
     """
-    while shell_connection.recv_ready(): #there is space and scope here to add a timeout
-        if shell_connection.recv_ready(): # must test for recv_ready() in order for the code not to hang!
+    while shell_connection.recv_ready():  # there is space and scope here to add a timeout
+        if shell_connection.recv_ready():  # must test for recv_ready() in order for the code not to hang!
             output = shell_connection.recv(nbytes).decode("UTF-8")
 
-    return(output)
+    return (output)
+
 
 def format_output(bytes_buffer):
     """
@@ -105,10 +109,11 @@ def format_output(bytes_buffer):
     delim = "\r\n"
     lines = bytes_buffer.split(delim)
     if not bytes_buffer.endswith(delim):
-        bytes_buffer = lines [-1]
+        bytes_buffer = lines[-1]
         lines = lines[:-1]
     for line in lines:
         yield line.rstrip()
+
 
 def printout(output):
     """
@@ -123,8 +128,9 @@ def printout(output):
     :return:
     """
     for i in format_output(output):
-        print(i, end ="\n")
-    return()
+        print(i, end="\n")
+    return ()
+
 
 def get_value(bytes_buffer):
     """
@@ -136,7 +142,7 @@ def get_value(bytes_buffer):
     """
     delim = "\r\n"
     lines = bytes_buffer.split(delim)
-    return(int(lines[-2]))
+    return (int(lines[-2]))
 
 
 def close_connection(SSH_object):
@@ -147,7 +153,8 @@ def close_connection(SSH_object):
     """
     SSH_object.close()
     print("SSH connection successfully closed")
-    return()
+    return ()
+
 
 def is_open(SSH_object):
     """
@@ -157,13 +164,14 @@ def is_open(SSH_object):
     :return: True in case the connection is active, an error if it isn't
     """
     ret = SSH_object.get_transport().is_active()
-    return(ret)
+    return (ret)
 
-def move(shell, axis, speed, mode,  length ):
+
+def move(shell, axis, speed, mode, length):
     """
     See motor definition above!!!
     The system of reference is inferred from the motor called.
-    
+
     :param shell: required, a SSH shell for comms.
     :param axis: axis for motion
     :param speed: interpolated (i.e. slow, pmac default) or rapid.
@@ -171,22 +179,27 @@ def move(shell, axis, speed, mode,  length ):
     :param length: length of motion
     :return: a string containing the move, to be passed to a shell.
     """
-    if axis == "X" or  axis == "Y":
+    if axis == "X" or axis == "Y":
         SR = str(3)
     else:
-        if axis == "Rot" or axis == "Pitch" or axis == "Roll" or axis == "Z":
-         SR = str(2)
+        if  axis == "Pitch" or axis == "pitch" or axis == "Roll" or axis == "roll" or axis == "Z":
+            SR = str(1)
+    else:
+        if axis == "Rot":
+            SR = str(2)
 
     if mode == "relative" or mode == "Rel" or mode == "Relative":
-        mode == "rel"
+        mode == "inc"
 
-    else: mode == "abs"
+    else:
+        mode == "abs"
 
-    command = "&" + SR + " cpx " + speed + " " +  mode + " " + axis_conversion(axis) +" " +  str(length) + "\n"
+    command = str( "&" + SR + " cpx " + speed + " " + mode + " " + axis_conversion(axis) + str(length) + \n)
     shell.send(command)
-    ouput = "Move: " +  command + " sent as requested"
+    output = str("Move: " + command + " sent as requested")
 
-    return(output)
+    return (output)
+
 
 def home_all(pmac_conn):
     """
@@ -199,28 +212,35 @@ def home_all(pmac_conn):
     pmac_conn.send(home)
     return ()
 
-
-
+def kill(shell):
+    """
+    Command to kill all movements at once.
+    :param shell: a paramiko shell to the pmac
+    :return:
+    """
+    shell.send("&*abort\n")
+    return()
 
 def get_jogspeed(shell, axis):
     """
     Gets from the system the jogspeed for the specified axis
     the user can input in normal x,y,z, pitch, roll, rot  | yaw
-    :param shell: a shell connection tothe
+    :param shell: a shell connection to the pmac
     :param axis: the axis for which the jogspeed is required
     :return: jogspeed, the programmed jogspeed
     """
     # TODO disable echoing, so as to return only one value, see Pmac user and software manual (page 1154)
     # go on the machine, check with echo what the output is, then set the echo bit according to that, so as to get a response
     # like:
-    #Motor[1].JogSpeed
-    #8900
+    # Motor[1].JogSpeed
+    # 8900
     new_ax = axis_conversion(axis)
-    shell.send("Motor[",new_ax,"].JogSpeed")
+    shell.send("Motor[", new_ax, "].JogSpeed")
     out = listen(shell)
     jogspeed = get_value(out)
 
-    return(jogspeed)
+    return (jogspeed)
+
 
 def set_jogspeed(shell, axis, value):
     """
@@ -232,11 +252,11 @@ def set_jogspeed(shell, axis, value):
     :return
     """
     new_ax = axis_conversion(axis)
-    shell.send("Motor[", new_ax, "].JogSpeed=",value)
+    shell.send("Motor[", new_ax, "].JogSpeed=", value)
     newspeed = get_jogspeed(shell, axis)
     output = ""
     output += "The new jogspeed has been set to: " + newspeed
-    return(output)
+    return (output)
 
 
 
