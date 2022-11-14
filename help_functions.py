@@ -1,5 +1,5 @@
 """
-This module provides a set of helper functions, to be used in conjuction with general_comms.py.
+This module provides a set of helper functions, to be used in conjuction with the rest of the module.
 
 Author M. Altissimo c/o Elettra Sincrotrone Trieste SCpA.
 
@@ -43,12 +43,12 @@ def help_reference():
 
     :return:
     """
-    print("These are the default axes to number and the Coordinate System (CS) conventions")
+    print("These are the built-in axes to number and the Coordinate System (CS) conventions")
     print()
-    print(" X = 5,    Coordinate System:  3")
-    print(" Y = 6,    Coordinate system: 3")
-    print(" Z = Z,    Coordinate system: 2, moves the RTT stage up and down")
-    print("Roll = A,  Coordinate System: 1, tips the RTT stage towards front or back, i.e. rotation around X axis")
+    print(" X = 5,    Coordinate System:  3, units: microns")
+    print(" Y = 6,    Coordinate system: 3, units: microns")
+    print(" Z = Z,    Coordinate system: 2, moves the RTT stage up and down, units: microns")
+    print("Roll = A,  Coordinate System: 1, tips the RTT stage towards front or back, i.e. rotation around X axis, units: degrees")
     print("Pitch = B, Coordinate System: 1, tilts the RTT stage towards left and right, Rotation around Y axis, units: degrees")
-    print("Rot = C,   Coordinate System: 1, rotation around Z axis")
+    print("Rot = C,   Coordinate System: 1, rotation around Z axis, units: degrees")
     return()

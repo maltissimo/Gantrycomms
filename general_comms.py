@@ -31,10 +31,10 @@ GPASCII = "gpascii -2 2>&1\n"  # this is needed to start the interpreter on the 
 EOT = "\04"  # End of transmission character, to close connection
 X = 5  # Coordinate system 3, units: microns
 Y = 6  # Coordinate system 3, units: microns
-Z = "Z"  # Coordinate system 2, moves the RTT stage up and down, units: microns
-Roll = "A"  # tips the RTT stage towards front or back, i.e. rotation around X axis, units: degrees
-Pitch = "B"  # tilts the RTT stage towards left and right, Rotation around Y axis, units: degrees
-Rot = "C"  # rotation around Z axis, units: degrees
+Z = "Z"  # Coordinate system 1, moves the RTT stage up and down, units: microns
+Roll = "A"  #  Coordinate system 1, tips the RTT stage towards front or back, i.e. rotation around X axis, units: degrees
+Pitch = "B"  #  Coordinate system 1, tilts the RTT stage towards left and right, Rotation around Y axis, units: degrees
+Rot = "C"  #  Coordinate system 2, rotation around Z axis, units: degrees
 
 ssh = paramiko.SSHClient()
 
@@ -119,7 +119,6 @@ def printout(output):
     This function prints the bytes of output obtained from the listen(shell) function.
     The usage should be as follows:
     shell.send("mycommand\n")
-    listen(shell)
     out = listen(shell)
     printout(out)
 
