@@ -4,6 +4,8 @@ This module provides a set of helper functions, to be used in conjuction with th
 Author M. Altissimo c/o Elettra Sincrotrone Trieste SCpA.
 
 """
+import ast
+import os
 
 
 def help_credentials():
@@ -45,7 +47,7 @@ def help_reference():
     """
     print("These are the built-in axes to number and the Coordinate System (CS) conventions")
     print()
-    print(" X = 5,    Coordinate System:  3, units: microns")
+    print(" X = 5,    Coordinate System: 3, units: microns")
     print(" Y = 6,    Coordinate system: 3, units: microns")
     print(" Z = Z,    Coordinate system: 2, moves the RTT stage up and down, units: microns")
     print("Roll = A,  Coordinate System: 1, tips the RTT stage towards front or back, i.e. rotation around X axis, units: degrees")

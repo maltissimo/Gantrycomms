@@ -4,7 +4,7 @@ See the definitions of motors in:
 global_motor_definitions.py
 
 and the help in
-help_functions.py
+help.py
 
 in particular, from  help_reference():
 

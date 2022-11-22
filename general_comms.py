@@ -11,8 +11,9 @@ Author M. Altissimo c/o Elettra Sincrotrone Trieste SCpA.
 
 # this is now the loopback interface for testing purposes MA20220810
 import paramiko
-from help_functions import *
+from help import *
 from global_motor_definitions import *
+from motor_movements import *
 import time
 
 """ 
