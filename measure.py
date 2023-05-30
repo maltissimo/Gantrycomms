@@ -1,6 +1,9 @@
 import general_comms
 import global_motor_definitions
 import motor_movements
+import camera
+import numpy as np
+from scipy import ndimage
 
 """
 Logic: 
@@ -55,6 +58,11 @@ def set_Start_pos(shell):
         return("No_start_Pos")
     return(start_pos)
 
+def goto_start(shell, start_pos):
+    start_pos = set_Start_pos(shell)
+    move = globa_motor_definition.move(shell, axis = "X", speed = "linear", mode = "abs", length = start_pos)
+    return()
+
 def set_meas_data():
     print("Please input the length of the measurement, in mm: ")
     length = float(input())
@@ -71,14 +79,30 @@ def set_meas_data():
     elif choice == "s":
         print("Please enter the sampling step of your measurement, in mm: ")
         sampling_step = float(input())
-        return([length, length/sampling_step, samppling_step, av_pts, choice])
+        return([length, length/sampling_step, sampling_step, av_pts, choice])
 
     else:
         return(default_meas_data)
 
 # TODO: implement measurement routine on the basis of what is written here above
 
-def measurement():
+def get_centroid (ndarray):
+    centroid = ndimage.measurements.center_of_mass((ndarray))
+    return (centroid)
+
+meas_data = set_meas_data()
+av_pts = meas_data[3]
+centroid = np.zeros(av_pts, 2)
+
+def measurement(shell, av_pts):
+    goto_start(shell, start_pos)
+    for i in range (0, av_pts):
+        image = camera.acquire()
+        centroid = get_centroid(image)
+
+
+
+
 
 
 

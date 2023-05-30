@@ -27,171 +27,183 @@ Author M. Altissimo c/o Elettra Sincrotrone Trieste SCpA
 relative motions
 """
 #X axis, CS 3, units: microns
-def left (shell, length, speed = "linear"):
+def left (shell, length, mode= "inc", speed = "linear"):
     """
     Moves the X head carriage to the left, i.e. positive relative motion.
 
     :param shell: required and active, an SSH shell for comms
     :param speed: linear (i.e. slow) by default. Can be set to rapid
+    :param mode: absolute (abs) or relative (inc), set to inc by default
     :param length: length of motion in microns
     :return:
     """
-    move = "&3 cpx " + speed + "X" + str(length) +"\n"
+    move = "&3 cpx " + mode + " " +  speed + "X" +str(length) +"\n"
     shell.send(move)
     return()
 
-def right(shell, length, speed = "linear"):
+def right (shell, length, mode= "inc", speed = "linear"):
     """
     Moves the X head carriage to the right, i.e. negative relative motion
     :param shell: required and active, an SSH shell for comms
     :param speed: linear (i.e. slow) by default. Can be set to rapid
+    :param mode: absolute (abs) or relative (inc), set to inc by default
     :param length: length of motion in microns. The function makes it negative.
     :return:
     """
-    move = "&3 cpx " + speed + "X" + str(-length) + "\n"
+    move = "&3 cpx " + mode + " " +  speed + "X" + str(-length) + "\n"
     shell.send(move)
     return()
 
 #Y axis, CS 3, units:microns
 
-def forward (shell, length, speed = "linear"):
+def forward (shell, length, mode= "inc", speed = "linear"):
     """
     Moves the RTT stage foward, i.e. positive relative motion
 
     :param shell: required and active, an SSH shell for comms
     :param speed: linear (i.e. slow) by default. Can be set to rapid
+    :param mode: absolute (abs) or relative (inc), set to inc by default
     :param length:  length of motion in microns.
     :return:
     """
-    move = "&3 cpx " + speed + "Y" + str(length) + "\n"
+    move = "&3 cpx " + mode + " " +  speed + "Y" + str(length) + "\n"
     shell.send(move)
     return ()
 
-def back (shell, length, speed = "linear"):
+def back (shell, length, mode= "inc", speed = "linear"):
     """
     Moves the RTT stage back, i.e. negative relative motion
 
     :param shell: required and active, an SSH shell for comms
     :param speed: linear (i.e. slow) by default. Can be set to rapid
+    :param mode: absolute (abs) or relative (inc), set to inc by default
     :param length: length of motion in microns. The function makes it negative
     :return:
     """
-    move = "&3 cpx " + speed + "Y" + str(-length) + "\n"
+    move = "&3 cpx " + mode + " " +  speed + "Y" + str(-length) + "\n"
     shell.send(move)
     return ()
 
 #Z axis, CS 2, units: microns
-def up (shell, length, speed = "linear"):
+def up (shell, length, mode= "inc", speed = "linear"):
     """
     Moves the RTT stage up, i.e. relative positive motion
 
     :param shell: required and active, an SSH shell for comms
     :param speed: linear (i.e. slow) by default. Can be set to rapid
+    :param mode: absolute (abs) or relative (inc), set to inc by default
     :param length: length of motion in microns.
     :return:
     """
-    move = "&2 cpx " + speed + "Z" + str(length) + "\n"
+    move = "&2 cpx " + mode + " " +  speed + "Z" + str(length) + "\n"
     shell.send(move)
     return()
 
-def down (shell, length, speed = "linear"):
+def down (shell, length, mode= "inc", speed = "linear"):
     """
     Moves the RTT stage down, i.e. relative positive motion
 
     :param shell: required and active, an SSH shell for comms
     :param speed: linear (i.e. slow) by default. Can be set to rapid
+    :param mode: absolute (abs) or relative (inc), set to inc by default
     :param length: length of motion in microns. The function makes it negative
     :return:
     """
 
-    move = "&2 cpx " + speed + "Z" + str(-length) + "\n"
+    move = "&2 cpx " + mode + " " +  speed + "Z" + str(-length) + "\n"
     shell.send(move)
     return()
 
 #Rotation axis, CS 2, units: degrees
 
-def rot_cwise (shell, length, speed = "linear"):
+def rot_cwise (shell, length, mode= "inc", speed = "linear"):
     """
     Rotation of the RTT stage, clockwise, units in degrees/
 
     :param shell: required and active, an SSH shell for comms
     :param speed: linear (i.e. slow) by default. Can be set to rapid
+    :param mode: absolute (abs) or relative (inc), set to inc by default
     :param length: length of motion in degrees. The function makes it negative, as that's the clockwise direction.
     :return:
     """
-    rot = "&1 cpx " + speed + "C" + str(-length) + "\n"
+    rot = "&1 cpx " + mode + " " +  speed + "C" + str(-length) + "\n"
     shell.send(rot)
 
     return()
 
-def rot_ccwise (shell, length, speed = "linear"):
+def rot_ccwise (shell, length, mode= "inc", speed = "linear"):
     """
     Rotation of the RTT stage, counterclockwise, units in degrees/
 
     :param shell: required and active, an SSH shell for comms
     :param speed: linear (i.e. slow) by default. Can be set to rapid
+    :param mode: absolute (abs) or relative (inc), set to inc by default
     :param length: length of motion in degrees.
     :return:
     """
-    rot = "&1 cpx " + speed + "C" + str(length) + "\n"
+    rot = "&1 cpx " + mode + " " +  speed + "C" + str(length) + "\n"
     shell.send(rot)
 
     return()
 
 #A and B axes, rolls and pitche respetively, CS1, units: degrees
 
-def pitchup (shell, length, speed = "linear"):
+def pitchup (shell, length, mode= "inc", speed = "linear"):
     """
     Tilts the RTT stage towards left, Rotation around Y axis, units: degrees
 
     :param shell: required and active, an SSH shell for comms
     :param speed: linear (i.e. slow) by default. Can be set to rapid
+    :param mode: absolute (abs) or relative (inc), set to inc by default
     :param length:length of motion in degrees.
     :return:
     """
-    pitch = "&1 cpx " + speed + "B" + str(length) + "\n"
+    pitch = "&1 cpx " + mode + " " +  speed + "B" + str(length) + "\n"
     shell.send(pitch)
     return()
 
 
-def pitchdown (shell, length, speed = "linear"):
+def pitchdown (shell, length, mode= "inc", speed = "linear"):
     """
     Tilts the RTT stage towards right, Rotation around Y axis, units: degrees
 
     :param shell: required and active, an SSH shell for comms
     :param speed: linear (i.e. slow) by default. Can be set to rapid
+    :param mode: absolute (abs) or relative (inc), set to inc by default
     :param length:length of motion in degrees.
     :return:
     """
-    pitch = "&1 cpx " + speed + "B" + str(-length) + "\n"
+    pitch = "&1 cpx " + mode + " " +  speed + "B" + str(-length) + "\n"
     shell.send(pitch)
     return ()
 
-def roll_left (shell, length, speed = "linear"):
+def roll_left (shell, length, mode= "inc", speed = "linear"):
     """
     Tips the RTT stage towards front , i.e. rotation around X axis, units: degrees
 
     :param shell: required and active, an SSH shell for comms
     :param speed: linear (i.e. slow) by default. Can be set to rapid
+    :param mode: absolute (abs) or relative (inc), set to inc by default
     :param length:length of motion in degrees.
     :return:
     """
 
-    roll = "&1 cpx " + speed + "A" + str(length) + "\n"
+    roll = "&1 cpx " + mode + " " +  speed + "A" + str(length) + "\n"
     shell.send(roll)
     return()
 
-def roll_right (shell, length, speed = "linear"):
+def roll_right (shell, length, mode= "inc", speed = "linear"):
     """
     Tips the RTT stage towards front , i.e. rotation around X axis, units: degrees
 
     :param shell: required and active, an SSH shell for comms
     :param speed: linear (i.e. slow) by default. Can be set to rapid
+    :param mode: absolute (abs) or relative (inc), set to inc by default
     :param length:length of motion in degrees.
     :return:
     """
 
-    roll = "&1 cpx " + speed + "A" + str(-length) + "\n"
+    roll = "&1 cpx " + mode + " " +  speed + "A" + str(-length) + "\n"
     shell.send(roll)
     return()
 
