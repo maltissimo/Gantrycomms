@@ -43,7 +43,50 @@ Further to this, here below the motor definitions:
 Author M. Altissimo c/o Elettra Sincrotrone Trieste SCpA
 
 """
-from general_comms import *
+import general_comms
+
+Motor_1_JogTa=50
+Motor_1_JogTs=50
+Motor_1_AbortTa=10
+Motor_1_MaxSpeed=0.5
+Motor_1_JogSpeed=0.5
+Motor_1_HomeVel=0.5
+Motor_1_PosUnit=4
+
+Motor_2_JogTa=50
+Motor_2_JogTs=50
+Motor_2_AbortTa=10
+Motor_2_MaxSpeed=0.5
+Motor_2_JogSpeed=0.5
+Motor_2_HomeVel=0.5
+Motor_2_PosUnit=4
+
+Motor_3_JogTa=50
+Motor_3_JogTs=50
+Motor_3_AbortTa=10
+Motor_3_MaxSpeed=0.5
+Motor_3_JogSpeed=0.5
+Motor_3_HomeVel=0.5
+Motor_3_PosUnit=4
+
+Motor_4_JogTa=300
+Motor_4_JogTs=100
+Motor_4_AbortTa=-20000
+Motor_4_JogSpeed=0.0049999999
+Motor_4_HomeVel=0.0049999999
+Motor_4_PosUnit=11
+
+Motor_5_JogTa=100
+Motor_5_JogTs=100
+Motor_5_JogSpeed=10
+Motor_5_PosUnit=4
+
+Motor_6_JogTa=100
+Motor_6_JogTs=100
+Motor_6_AbortTa=50
+Motor_6_JogSpeed=10
+Motor_6_PosUnit=4
+
 def axis_conversion(axis):
     """
     Converts axis as input by user back into Pmac-understandable format
@@ -133,44 +176,24 @@ def motorNameConv(motorName):
     convName = motorName[:len(motorName)-2] + "[" + index + "]"
     return(convName)
 
-Motor_1_JogTa=50
-Motor_1_JogTs=50
-Motor_1_AbortTa=10
-Motor_1_MaxSpeed=0.5
-Motor_1_JogSpeed=0.5
-Motor_1_HomeVel=0.5
-Motor_1_PosUnit=4
+def getMotorPos(shell, motorName="Motor_5"):
 
-Motor_2_JogTa=50
-Motor_2_JogTs=50
-Motor_2_AbortTa=10
-Motor_2_MaxSpeed=0.5
-Motor_2_JogSpeed=0.5
-Motor_2_HomeVel=0.5
-Motor_2_PosUnit=4
+    real_name = motorNameConv(motorName)
+    command = str(real_name+ ".ActPos" + "\n")
+    shell.send(command)
+    out = general_comms.listen(shell)
+    act_pos = general_comms.get_value(out)
+    return(act_pos)
 
-Motor_3_JogTa=50
-Motor_3_JogTs=50
-Motor_3_AbortTa=10
-Motor_3_MaxSpeed=0.5
-Motor_3_JogSpeed=0.5
-Motor_3_HomeVel=0.5
-Motor_3_PosUnit=4
+def getHomePos(shell):
+    """
 
-Motor_4_JogTa=300
-Motor_4_JogTs=100
-Motor_4_AbortTa=-20000
-Motor_4_JogSpeed=0.0049999999
-Motor_4_HomeVel=0.0049999999
-Motor_4_PosUnit=11
+    """
+    real_name = motorNameConv(motorName)
+    command = str(realname + ".HomePos" + "\n")
+    shell.send(command)
+    out = general_comms.listen(shell)
+    home_pos = general_comms.get_value(out)
+    return (home_pos)
 
-Motor_5_JogTa=100
-Motor_5_JogTs=100
-Motor_5_JogSpeed=10
-Motor_5_PosUnit=4
 
-Motor_6_JogTa=100
-Motor_6_JogTs=100
-Motor_6_AbortTa=50
-Motor_6_JogSpeed=10
-Motor_6_PosUnit=4

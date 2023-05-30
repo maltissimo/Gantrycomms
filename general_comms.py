@@ -11,9 +11,9 @@ Author M. Altissimo c/o Elettra Sincrotrone Trieste SCpA.
 
 # this is now the loopback interface for testing purposes MA20220810
 import paramiko
-from help import *
+#from gantry_help import *
 from global_motor_definitions import *
-from motor_movements import *
+#from motor_movements import *
 import time
 
 """ 
@@ -37,9 +37,14 @@ Roll = "A"  #  Coordinate system 1, tips the RTT stage towards front or back, i.
 Pitch = "B"  #  Coordinate system 1, tilts the RTT stage towards left and right, Rotation around Y axis, units: degrees
 Rot = "C"  #  Coordinate system 2, rotation around Z axis, units: degrees
 
-ssh = paramiko.SSHClient()
+def sshCreate():
+    """
+    This creates an SSH client using the paramiko interface. I am writing this as I want one and only one ssh client.
 
-
+    :return: a paramiko object and a flag set to 1.
+    """
+    flag = 1
+    return([paramiko.SSHClient(), flag])
 
 def get_credentials():
     """
@@ -60,7 +65,7 @@ def get_credentials():
     return ([pmac_ip, pmac_uname, pmac_pwd])
 
 
-def connect_to_pmac():
+def connect_to_pmac(ssh):
     """
     This functions connects to PMAC and returns a shell object, which can be used to send
     commands down to the PMAC. See file "paramiko_tests.py" for clarification.
@@ -137,11 +142,11 @@ def get_value(bytes_buffer):
     The procedure is shortened, as the split(delim) returns the shell prompt as last value, so we pick the second last.
 
     :param bytes_buffer: the bytes output of listen(shell)
-    :return: an integer
+    :return: a float
     """
     delim = "\r\n"
     lines = bytes_buffer.split(delim)
-    return (int(lines[-2]))
+    return (float(lines[-2]))
 
 
 def close_connection(SSH_object):
@@ -165,51 +170,7 @@ def is_open(SSH_object):
     ret = SSH_object.get_transport().is_active()
     return (ret)
 
-def kill(shell):
-    """
-    Command to kill all movements at once.
-    :param shell: a paramiko shell to the pmac
-    :return:
-    """
-    shell.send("&*abort\n")
-    return()
 
-def get_jogspeed(shell, axis):
-    """
-    Gets from the system the jogspeed for the specified axis
-    the user can input in normal x,y,z, pitch, roll, rot  | yaw
-    :param shell: a shell connection to the pmac
-    :param axis: the axis for which the jogspeed is required
-    :return: jogspeed, the programmed jogspeed
-    """
-    # TODO disable echoing, so as to return only one value, see Pmac user and software manual (page 1154)
-    # go on the machine, check with echo what the output is, then set the echo bit according to that, so as to get a response
-    # like:
-    # Motor[1].JogSpeed
-    # 8900
-    new_ax = axis_conversion(axis)
-    shell.send("Motor[", new_ax, "].JogSpeed")
-    out = listen(shell)
-    jogspeed = get_value(out)
-
-    return (jogspeed)
-
-
-def set_jogspeed(shell, axis, value):
-    """
-    Sets the jog speed of the specified axis, and prints it out for checking  by the user
-
-    :param shell: a shell connection tothe
-    :param axis: the axis for which the jogspeed is required
-    :param speed: desired jogspeed
-    :return
-    """
-    new_ax = axis_conversion(axis)
-    shell.send("Motor[", new_ax, "].JogSpeed=", value)
-    newspeed = get_jogspeed(shell, axis)
-    output = ""
-    output += "The new jogspeed has been set to: " + newspeed
-    return (output)
 
 
 

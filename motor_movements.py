@@ -4,7 +4,7 @@ See the definitions of motors in:
 global_motor_definitions.py
 
 and the help in
-help.py
+gantry_help.py
 
 in particular, from  help_reference():
 
@@ -20,14 +20,14 @@ All motions are in linear mode, i.e. slow, by default, unless specified explicit
 Author M. Altissimo c/o Elettra Sincrotrone Trieste SCpA
 
 """
-(shell, axis, speed, mode, length)
+#(shell, axis, speed, mode, length)
 
 
 """
 relative motions
 """
 #X axis, CS 3, units: microns
-def left (shell, speed = "linear", length):
+def left (shell, length, speed = "linear"):
     """
     Moves the X head carriage to the left, i.e. positive relative motion.
 
@@ -40,7 +40,7 @@ def left (shell, speed = "linear", length):
     shell.send(move)
     return()
 
-def right(shell, speed = "linear", length):
+def right(shell, length, speed = "linear"):
     """
     Moves the X head carriage to the right, i.e. negative relative motion
     :param shell: required and active, an SSH shell for comms
@@ -54,7 +54,7 @@ def right(shell, speed = "linear", length):
 
 #Y axis, CS 3, units:microns
 
-def forward (shell, speed = "linear", length):
+def forward (shell, length, speed = "linear"):
     """
     Moves the RTT stage foward, i.e. positive relative motion
 
@@ -67,9 +67,9 @@ def forward (shell, speed = "linear", length):
     shell.send(move)
     return ()
 
-def back (shell, speed = "linear", length):
+def back (shell, length, speed = "linear"):
     """
-    Moves the RTT stage bac, i.e. negative relative motion
+    Moves the RTT stage back, i.e. negative relative motion
 
     :param shell: required and active, an SSH shell for comms
     :param speed: linear (i.e. slow) by default. Can be set to rapid
@@ -81,7 +81,7 @@ def back (shell, speed = "linear", length):
     return ()
 
 #Z axis, CS 2, units: microns
-def up (shell, speed = "linear", length):
+def up (shell, length, speed = "linear"):
     """
     Moves the RTT stage up, i.e. relative positive motion
 
@@ -94,7 +94,7 @@ def up (shell, speed = "linear", length):
     shell.send(move)
     return()
 
-def down (shell, speed = "linear", length):
+def down (shell, length, speed = "linear"):
     """
     Moves the RTT stage down, i.e. relative positive motion
 
@@ -110,7 +110,7 @@ def down (shell, speed = "linear", length):
 
 #Rotation axis, CS 2, units: degrees
 
-def rot_cwise (shell, speed = "linear", length):
+def rot_cwise (shell, length, speed = "linear"):
     """
     Rotation of the RTT stage, clockwise, units in degrees/
 
@@ -124,7 +124,7 @@ def rot_cwise (shell, speed = "linear", length):
 
     return()
 
-def rot_ccwise (shell, speed = "linear", length):
+def rot_ccwise (shell, length, speed = "linear"):
     """
     Rotation of the RTT stage, counterclockwise, units in degrees/
 
@@ -140,7 +140,7 @@ def rot_ccwise (shell, speed = "linear", length):
 
 #A and B axes, rolls and pitche respetively, CS1, units: degrees
 
-def pitchup (shell, speed = "linear", length):
+def pitchup (shell, length, speed = "linear"):
     """
     Tilts the RTT stage towards left, Rotation around Y axis, units: degrees
 
@@ -154,7 +154,7 @@ def pitchup (shell, speed = "linear", length):
     return()
 
 
-def pitchdown (shell, speed = "linear", length):
+def pitchdown (shell, length, speed = "linear"):
     """
     Tilts the RTT stage towards right, Rotation around Y axis, units: degrees
 
@@ -167,7 +167,7 @@ def pitchdown (shell, speed = "linear", length):
     shell.send(pitch)
     return ()
 
-def roll_left (shell, speed = "linear", length):
+def roll_left (shell, length, speed = "linear"):
     """
     Tips the RTT stage towards front , i.e. rotation around X axis, units: degrees
 
@@ -181,7 +181,7 @@ def roll_left (shell, speed = "linear", length):
     shell.send(roll)
     return()
 
-def roll_right (shell, speed = "linear", length):
+def roll_right (shell, length, speed = "linear"):
     """
     Tips the RTT stage towards front , i.e. rotation around X axis, units: degrees
 
@@ -195,3 +195,48 @@ def roll_right (shell, speed = "linear", length):
     shell.send(roll)
     return()
 
+def kill(shell):
+    """
+    Command to kill all movements at once.
+    :param shell: a paramiko shell to the pmac
+    :return:
+    """
+    shell.send("&*abort\n")
+    return()
+
+def get_jogspeed(shell, axis):
+    """
+    Gets from the system the jogspeed for the specified axis
+    the user can input in normal x,y,z, pitch, roll, rot  | yaw
+    :param shell: a shell connection to the pmac
+    :param axis: the axis for which the jogspeed is required
+    :return: jogspeed, the programmed jogspeed
+    """
+    # TODO disable echoing, so as to return only one value, see Pmac user and software manual (page 1154)
+    # go on the machine, check with echo what the output is, then set the echo bit according to that, so as to get a response
+    # like:
+    # Motor[1].JogSpeed
+    # 8900
+    new_ax = axis_conversion(axis)
+    shell.send("Motor[", new_ax, "].JogSpeed")
+    out = listen(shell)
+    jogspeed = get_value(out)
+
+    return (jogspeed)
+
+
+def set_jogspeed(shell, axis, value):
+    """
+    Sets the jog speed of the specified axis, and prints it out for checking  by the user
+
+    :param shell: a shell connection tothe
+    :param axis: the axis for which the jogspeed is required
+    :param speed: desired jogspeed
+    :return
+    """
+    new_ax = axis_conversion(axis)
+    shell.send("Motor[", new_ax, "].JogSpeed=", value)
+    newspeed = get_jogspeed(shell, axis)
+    output = ""
+    output += "The new jogspeed has been set to: " + str(newspeed)
+    return (output)
