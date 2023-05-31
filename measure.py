@@ -3,7 +3,8 @@ import global_motor_definitions
 import motor_movements
 import camera
 import numpy as np
-from scipy import ndimage
+
+import math_utils
 
 """
 Logic: 
@@ -86,9 +87,7 @@ def set_meas_data():
 
 # TODO: implement measurement routine on the basis of what is written here above
 
-def get_centroid (ndarray):
-    centroid = ndimage.measurements.center_of_mass((ndarray))
-    return (centroid)
+
 
 meas_data = set_meas_data()
 av_pts = meas_data[3]
@@ -98,7 +97,7 @@ def measurement(shell, av_pts):
     goto_start(shell, start_pos)
     for i in range (0, av_pts):
         image = camera.acquire()
-        centroid = get_centroid(image)
+        centroid = math_utils.get_centroid(image)
 
 
 
