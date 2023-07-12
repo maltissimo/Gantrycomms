@@ -1,0 +1,5 @@
+RetrieveResult(5000, pylon.TimeoutHandling_ThrowException)
+the 5000 is a ms timeout wait. if it is exceeded, an exception is thrown.
+
+GrabOne(TimeOut_ms)
+has a similar construction

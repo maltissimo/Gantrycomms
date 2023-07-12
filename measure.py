@@ -87,18 +87,28 @@ def set_meas_data():
 
 # TODO: implement measurement routine on the basis of what is written here above
 
-
+my_cam = camera.InitCam()
 
 meas_data = set_meas_data()
 av_pts = meas_data[3]
 centroid = np.zeros(av_pts, 2)
 
-def measurement(shell, av_pts):
+
+#needs a blank image in order to create an empty array of size(image)
+# this is because we want to add all the images at a single point, average the result
+# and calculate the centroid from the average.
+
+blank = camera.acquire(my_cam)
+image = np.zeros(np.shape(blank))
+def measurement(shell, av_pts, camera, image):
     goto_start(shell, start_pos)
     for i in range (0, av_pts):
-        image = camera.acquire()
-        centroid = math_utils.get_centroid(image)
+        image = image + camera.acquire(my_cam)
+    av_image = image/av_pts
+    return(av_image)
 
+
+# from here: store encoder, calcu
 
 
 
