@@ -7,31 +7,17 @@ import cv2
 def InitCam():
 """
 This takes about 300 ms once is called, but it's called only once during execution
-
+The camera is Open in the function, so it's ready for usage.
+The camera is also initialized via the UserSetSelector method, and the expusure time set to Min
+(12 microseconds).
 """
-    tlf = py.TlFactory.GetInstance()
-    devices = tlf.EnumerateDevices()
-
-    mycam = py.InstantCamera(tlf.CreateDevice(devices[0]))
-
-    # if there is only device:
-    mycam = py.InstantCamera(tlf.CreateFirstDevice())
+    mycam =py.InstantCamera(py.TlFactory.GetInstance().CreateFirsdevice())
+    mycam.Open()
+    mycam.UserSetSelector = "Default"
+    mycam.UserSetLoad.Execute()
+    mycam.ExposureTime = mycam.ExposureTime.Min
 
     return(mycam)
-
-mycam.Open() #this takes about 200 ms.
-
-"""
-MUST select PixelFormat as follows: 
-mycam.PixelFormat.Symbolics
-
-this will output a numbenr of possibilities,and you'll have to choose what suits best. 
-It should be a greyscale of some sort, in order for the array to be understandable. 
-Once that is done: 
-mycam.PixelFormat = ONE OF THE RESULTS JUST OBTAINED.
-
-"""
-
 
 def acquire(mycam):
     res = mycam.GrabOne(1000)
@@ -41,4 +27,25 @@ def acquire(mycam):
 
 mycam.Close()
 
-def 
+def grabdata(cam, nr_of_grabs = 10 ):
+    """
+    This fetches n images, where n = nr_of_images, and is implemented as it is about 500 times faster than
+    GrabOne.
+
+    :param cam: an opened, initialized camera
+    :param nr_of_grabs: the number of frames to grab, set to 10 by default.
+    :return: sum of all the grabbed frames.
+    """
+
+    img_sum = np.zeros((cam.Height.Value, cam.Width.Value, dtype = uint16))
+    cam.StartGrabbing (nr_of_grabs)
+    while cam.IsGrabbing():
+        while cam.RetrieveResult(1000) as resç
+        if res.GrabSucceded():
+            img = res.GetArray
+            img_sum  += img
+        else:
+            raise RuntimeError("Grab Failed")
+    cam.StopGrabbing()
+
+    return(img_sum)

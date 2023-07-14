@@ -3,7 +3,7 @@ import global_motor_definitions
 import motor_movements
 import camera
 import numpy as np
-
+from datetime import datetime
 import math_utils
 
 """
@@ -44,13 +44,22 @@ Save into text:
 
 """
 
+def mytime():
+    """
+
+    :return: dd/mm/yyy HH:MM:SS
+    """
+    now = datetime.now()
+    d1 =  now.strftime("%d/%m/%Y %H:%M:%S")
+    return(d1)
+
 length = 100 # length of measurement in mm
-nr_points = 50 # nr of points per measurement
+nr_points = 50 # nr of points per measurement along the mirror
 sampling_step =  length/nr_points # measurement step size, i.e. sampling of mirror
 av_pts = 2
 default_meas_data =(length, nr_points,sampling_step , av_pts)
 
-def set_Start_pos(shell):
+def set_start_pos(shell):
     print("The measurement needs a starting position, please place the head at the desired one, type done when finished")
     if (str(input)=="done"):
         start_pos = global_motor_definitions.getMotorPos(shell)
@@ -61,7 +70,7 @@ def set_Start_pos(shell):
 
 def goto_start(shell, start_pos):
     start_pos = set_Start_pos(shell)
-    move = globa_motor_definition.move(shell, axis = "X", speed = "linear", mode = "abs", length = start_pos)
+    move = global_motor_definition.move(shell, axis = "X", speed = "linear", mode = "abs", length = start_pos)
     return()
 
 def set_meas_data():
@@ -83,32 +92,47 @@ def set_meas_data():
         return([length, length/sampling_step, sampling_step, av_pts, choice])
 
     else:
-        return(default_meas_data)
-
-# TODO: implement measurement routine on the basis of what is written here above
+        return default_meas_data
 
 my_cam = camera.InitCam()
 
-meas_data = set_meas_data()
-av_pts = meas_data[3]
-centroid = np.zeros(av_pts, 2)
+meas_data = set_meas_data() # this specifies length, nr of points, sampling step and averaging images per point.
 
 
-#needs a blank image in order to create an empty array of size(image)
-# this is because we want to add all the images at a single point, average the result
-# and calculate the centroid from the average.
+def nodeflection(cam):
+    """
+    this is to output the ZERO deflection centroid.
+    :param cam: an open camera
+    :return: the centroid of the undeflected laser beam.
+    """
+    img = camera.grabdata(cam, 20)
+    return math_utils.get_centroid(img)
 
-blank = camera.acquire(my_cam)
-image = np.zeros(np.shape(blank))
-def measurement(shell, av_pts, camera, image):
-    goto_start(shell, start_pos)
-    for i in range (0, av_pts):
-        image = image + camera.acquire(my_cam)
-    av_image = image/av_pts
-    return(av_image)
+zero_defl = [0,0] #this is useful for measurments purposes
+
+#data_point = math_utils.deviation(zero_defl, data)
+def measure(cam,shell,start_pos, meas_data):
+    start = mytime()
+    output = start
+    if zero_defl == [0,0]:
+        zero_defl = nodeflection(my_cam)
+
+    goto_start(shell, start_pos) #moves X stage to start position
+    centroid = np.zeros(meas_data[3], 2)
+
+    for i in range (meas_data[1]):
+        data = math_utils.get_centroid((camera.grabdata(cam, meas_data[3])) /meas_data[3])
+        data_point = math_utils.deviation(zero_defl, data)
+        output += str (data_point) + "\n"
+        motor_movements.left(shell, meas_data[2])
+
+    end = mytime()
+    output += end
+    np.savetxt(output)
+
+    return("Measurement done!")
 
 
-# from here: store encoder, calcu
 
 
 
